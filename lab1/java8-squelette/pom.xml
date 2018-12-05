@@ -107,7 +107,7 @@
             <plugin>
                 <groupId>com.google.appengine</groupId>
                 <artifactId>appengine-maven-plugin</artifactId>
-                <version>1.9.48</version>
+                <version>1.9.69</version>
                 <configuration>
                     <enableJarClasses>false</enableJarClasses>
                     <!-- Comment in the below snippet to bind to all IPs instead of just localhost -->
