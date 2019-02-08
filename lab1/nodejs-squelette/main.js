@@ -93,18 +93,19 @@ app.get('/api/run', (req, res, next) => {
 				timeStampMax = timeStamps[1]
 				timeStampMin = timeStamps[0]
 			}
-			if (typeof id !== 'undefined') {
-				query = lookUpByIdTime(id, timeStampMin, timeStampMax)
-			} else if (typeof userName !== 'undefined') {
-				console.log("ici ?")				
+			 if (typeof userName !== 'undefined') {
+
 				if (typeof position !== 'undefined') {
 					query = lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax)
 				} else {
-					console.log("iciiiiiiiiiiiiiiiiiiiiii")
 					query = lookUpByNameTime(userName, timeStampMin, timeStampMax)
 				}
 			} else {
-				query = lookUpByTime(timeStampMin, timeStampMax)
+				 if (typeof id !== 'undefined') {
+                                	query = lookUpByIdTime(id, timeStampMin, timeStampMax)
+                        	}else {
+					query = lookUpByTime(timeStampMin, timeStampMax)
+					}
 			}
 		} else {
 			if (typeof userName !== 'undefined') {
@@ -154,7 +155,7 @@ function lookUpByNamePos(userName, position) {
 }
 
 function lookUpByNameTime(userName, timeStampMin, timeStampMax) {
-	console.log("Min: ", timeStampMin, " Max: ", timeStamMax)
+	
 	const query = datastore
 		.createQuery('Record')
 		.filter('user', '=', userName)
