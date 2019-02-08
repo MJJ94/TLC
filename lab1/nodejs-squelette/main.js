@@ -29,9 +29,19 @@ app.post('/api/run', (req, res, next) => {
 		.send(req.body)
 })
 
-app.delete('/api/run/:run_id', (req, res, next) => {
-	const run_ids = req.params.run_id.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
-	run_ids.forEach(runId => {
+app.delete('/api/run', (req, res, next) => {
+	const ids = req.query.run_id.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+	ids.forEach(id => {
+		const query = lookUpById(id)
+		datastore.runQuery(query)
+		.then(results => {
+			const records = results[0]
+			records.forEach(record => {
+				console.log("key " , record.key)
+			})
+		})
+
+		.catch(err => { console.error('ERROR:', err) })
 		const recordKey = datastore.key(['Record', runId]);
 		datastore
 			.delete(recordKey)
@@ -70,37 +80,6 @@ app.post('/api/run/records', (req, res, next) => {
 		.set('Content-Type', 'application/json')
 		.send(req.body.records)
 })
-
-// app.get('/api/run', (req, res, next) => {
-// 	const userName = req.query.userName
-// 	const query = lookUpByName(userName);
-// 	datastore.runQuery(query)
-// 		.then(results => {
-// 			const records = results[0]
-// 			res
-// 				.status(200)
-// 				.set('Content-Type', 'application/json')
-// 				.send(records)
-// 		})
-// 		.catch(err => { console.error('ERROR:', err) })
-
-// })
-
-// app.get('/api/run', (req, res, next) => {
-// 	const userName = req.query.userName
-// 	const position = req.query.position
-
-// 	datastore.runQuery(query)
-// 		.then(results => {
-// 			const records = results[0]
-// 			res
-// 				.status(200)
-// 				.set('Content-Type', 'application/json')
-// 				.send(records)
-// 		})
-
-// 		.catch(err => { console.error('ERROR:', err) })
-// })
 
 app.get('/api/run', (req, res, next) => {
 	var timeStamps
@@ -214,6 +193,14 @@ function lookUpByPos(position) {
 	const query = datastore
 		.createQuery('Record')
 		.filter('position', '=', position)
+
+	return query
+}
+
+function lookUpById(id) {
+	const query = datastore
+		.createQuery('Record')
+		.filter('id', '=', id)
 
 	return query
 }
