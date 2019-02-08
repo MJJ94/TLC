@@ -36,7 +36,7 @@ app.delete('/api/run/:ids', (req, res, next) => {
 	res
 		.status(200)
 		.set('Content-Type', 'application/json')
-		.send({"delete":"done"})
+		.send({ "delete": "done" })
 })
 
 const PORT = process.env.PORT || 8080;
@@ -46,8 +46,8 @@ app.listen(PORT, () => {
 })
 
 app.post('/api/run', (req, res, next) => {
-	
-const entities = []
+
+	const entities = []
 	req.body.forEach(record => {
 		var timeStamp = record.timestamp
 		if (typeof timeStamp === 'undefined') {
@@ -70,7 +70,7 @@ const entities = []
 	res
 		.status(200)
 		.set('Content-Type', 'application/json')
-		.send("add":"done")
+		.send({ "add": "done" })
 })
 
 app.get('/api/run', (req, res, next) => {
@@ -81,43 +81,43 @@ app.get('/api/run', (req, res, next) => {
 	var query
 	var timeStampMin
 	var timeStampMax
-	if(Object.keys(req.query).length === 0 && req.query.constructor === Object) {
+	if (Object.keys(req.query).length === 0 && req.query.constructor === Object) {
 		query = getall()
-	}else {
-	if (typeof req.query.timestamp !== 'undefined') {
-		timeStamps = req.query.timestamp.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
-		if (timeStamps[0] >= timeStamps[1]) {
-			timeStampMax = timeStamps[0]
-			timeStampMin = timeStamps[1]
-		} else {
-			timeStampMax = timeStamps[1]
-			timeStampMin = timeStamps[0]
-		}
-		if (typeof id !== 'undefined') {
-			query = lookUpByIdTime(id, timeStampMin, timeStampMax)
-		} else if (typeof userName !== 'undefined') {
-			if (typeof position !== 'undefined') {
-				query = lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax)
-			} else {
-				query = lookUpByNameTime(userName, timeStampMin, timeStampMax)
-			}
-		} else {
-			query = lookUpByTime(timeStampMin, timeStampMax)
-		}
 	} else {
-		if (typeof userName !== 'undefined') {
-			if (typeof position !== 'undefined') {
-				query = lookUpByNamePos(userName, position)
+		if (typeof req.query.timestamp !== 'undefined') {
+			timeStamps = req.query.timestamp.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+			if (timeStamps[0] >= timeStamps[1]) {
+				timeStampMax = timeStamps[0]
+				timeStampMin = timeStamps[1]
 			} else {
-				query = lookUpByName(userName)
+				timeStampMax = timeStamps[1]
+				timeStampMin = timeStamps[0]
 			}
-		} else if (typeof position !== 'undefined') {
-			query = lookUpByPos(position)
-		} else if (typeof id !== 'undefined') {
-			query = lookUpById(id)
+			if (typeof id !== 'undefined') {
+				query = lookUpByIdTime(id, timeStampMin, timeStampMax)
+			} else if (typeof userName !== 'undefined') {
+				if (typeof position !== 'undefined') {
+					query = lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax)
+				} else {
+					query = lookUpByNameTime(userName, timeStampMin, timeStampMax)
+				}
+			} else {
+				query = lookUpByTime(timeStampMin, timeStampMax)
+			}
+		} else {
+			if (typeof userName !== 'undefined') {
+				if (typeof position !== 'undefined') {
+					query = lookUpByNamePos(userName, position)
+				} else {
+					query = lookUpByName(userName)
+				}
+			} else if (typeof position !== 'undefined') {
+				query = lookUpByPos(position)
+			} else if (typeof id !== 'undefined') {
+				query = lookUpById(id)
+			}
 		}
 	}
-}
 	datastore.runQuery(query)
 		.then(results => {
 
@@ -152,7 +152,7 @@ function lookUpByNamePos(userName, position) {
 }
 
 function lookUpByNameTime(userName, timeStampMin, timeStampMax) {
-	console.log("Min: " , timeStampMin , " Max: " , timeStamMax)
+	console.log("Min: ", timeStampMin, " Max: ", timeStamMax)
 	const query = datastore
 		.createQuery('Record')
 		.filter('user', '=', userName)
