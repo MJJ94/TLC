@@ -36,7 +36,7 @@ app.delete('/api/run/:ids', (req, res, next) => {
 	res
 		.status(200)
 		.set('Content-Type', 'application/json')
-		.send({ hello: "world" })
+		.send({"delete":"done"})
 })
 
 const PORT = process.env.PORT || 8080;
@@ -46,8 +46,9 @@ app.listen(PORT, () => {
 })
 
 app.post('/api/run', (req, res, next) => {
-	const entities = []
-	req.body.data.forEach(record => {
+	
+const entities = []
+	req.body.forEach(record => {
 		var timeStamp = record.timestamp
 		if (typeof timeStamp === 'undefined') {
 			timeStamp = Date.now()
@@ -61,14 +62,15 @@ app.post('/api/run', (req, res, next) => {
 		const recordKey = datastore.key("Record")
 		entities.push(({
 			key: recordKey,
-			data: record
+			data: data
 		}))
 	})
 	datastore.upsert(entities).then(() => { console.log("done") })
+
 	res
 		.status(200)
 		.set('Content-Type', 'application/json')
-		.send(req.body.records)
+		.send("add":"done")
 })
 
 app.get('/api/run', (req, res, next) => {
@@ -76,12 +78,12 @@ app.get('/api/run', (req, res, next) => {
 	const userName = req.query.user
 	const position = req.query.loc
 	const id = parseInt(req.query.id)
-
-	var position
-
 	var query
 	var timeStampMin
 	var timeStampMax
+	if(Object.keys(req.query).length === 0 && req.query.constructor === Object) {
+		query = getall()
+	}else {
 	if (typeof req.query.timestamp !== 'undefined') {
 		timeStamps = req.query.timestamp.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 		if (timeStamps[0] >= timeStamps[1]) {
@@ -113,10 +115,9 @@ app.get('/api/run', (req, res, next) => {
 			query = lookUpByPos(position)
 		} else if (typeof id !== 'undefined') {
 			query = lookUpById(id)
-		} else {
-			query = getall()
 		}
 	}
+}
 	datastore.runQuery(query)
 		.then(results => {
 
@@ -151,7 +152,7 @@ function lookUpByNamePos(userName, position) {
 }
 
 function lookUpByNameTime(userName, timeStampMin, timeStampMax) {
-
+	console.log("Min: " , timeStampMin , " Max: " , timeStamMax)
 	const query = datastore
 		.createQuery('Record')
 		.filter('user', '=', userName)
