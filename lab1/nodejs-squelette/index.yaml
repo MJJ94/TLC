@@ -1,2 +1,37 @@
 indexes:
 
+- kind: Record
+  ancestor: no
+  properties:
+  - name: userName
+  - name: position
+    direction: desc
+
+- kind: Record
+  ancestor: no
+  properties:
+  - name: userName
+  - name: timeStamp
+    direction: desc
+
+- kind: Record
+  ancestor: no
+  properties:
+  - name: timeStamp
+  - name: timeStamp
+    direction: desc
+
+- kind: Record
+  ancestor: no
+  properties:
+  - name: position
+  - name: timeStamp
+    direction: desc
+
+- kind: Record
+  ancestor: no
+  properties:
+  - name: userName
+  - name: timeStamp
+  - name: position
+    direction: desc
