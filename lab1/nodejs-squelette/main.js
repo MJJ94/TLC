@@ -75,7 +75,7 @@ app.get('/api/run', (req, res, next) => {
 	var timeStampMin
 	var timeStampMax
 	if (typeof req.query.timestamp !== 'undefined') {
-		timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+		timeStamps = req.query.timestamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 		if (timeStamps[0] >= timeStamps[1]) {
 			timeStampMax = timeStamps[0]
 			timeStampMin = timeStamps[1]
