@@ -7,16 +7,7 @@ app.enable('trust proxy')
 app.use(bodyParser.json())
 const datastore = Datastore()
 
-app.get('/api/run', (req, res, next) => {
-  console.log(req.query)
-  res
-    .status(200)
-    .set('Content-Type', 'application/json')
-    .send({hello: "world"})
-})
-
 app.post('/api/run', (req, res, next) => {
-  console.log(req.body)
    const recordKey = datastore.key('Record');
    const entity = {
 	key: recordKey,
@@ -40,7 +31,7 @@ app.post('/api/run', (req, res, next) => {
 
 app.delete('/api/run/:run_id', (req, res, next) => {
   const run_ids = req.params.run_id.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
-run_ids.forEach(runId => {console.log(runId)
+run_ids.forEach(runId => {
   	const recordKey = datastore.key(['Record', runId]);
   	datastore
     	.delete(recordKey)
@@ -70,7 +61,6 @@ record.timeStamp = Date.now()
 const recordKey = datastore.key("Record")
 entities.push(({key: recordKey, 
 data: record}))})
-  req.body.records.forEach(record => {console.log(record.firstName + " " + record.lastName)})
   datastore.upsert(entities).then(() => {console.log("done")})  
 res
     .status(200)
