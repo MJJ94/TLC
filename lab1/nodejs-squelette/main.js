@@ -69,7 +69,7 @@ app.get('/api/run', (req, res, next) => {
 	const userName = req.query.user
 	const lat = req.query.lat
 	const long = req.query.long
-	const id = req.query.id
+	const id = parseInt(req.query.id)
 
 var position
 	if (typeof long !== 'undefined' && typeof lat !== 'undefined') {
