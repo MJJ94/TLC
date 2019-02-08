@@ -48,7 +48,9 @@ app.listen(PORT, () => {
 app.post('/api/run', (req, res, next) => {
 	const entities = []
 	req.body.data.forEach(record => {
+		if(typeof record.timestamp === 'undefined'){
 		record.timestamp = Date.now()
+		}
 		const recordKey = datastore.key("Record")
 		entities.push(({
 			key: recordKey,
@@ -68,7 +70,8 @@ app.get('/api/run', (req, res, next) => {
 	const lat = req.query.lat
 	const long = req.query.long
 	const id = req.query.id
-	var position
+
+var position
 	if (typeof long !== 'undefined' && typeof lat !== 'undefined') {
 		position = { long: long, lat: lat }
 	}
@@ -110,7 +113,7 @@ app.get('/api/run', (req, res, next) => {
 			query = getall()
 		}
 	}
-
+console.log(query)
 	datastore.runQuery(query)
 		.then(results => {
 
