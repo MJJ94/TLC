@@ -48,8 +48,15 @@ app.listen(PORT, () => {
 app.post('/api/run', (req, res, next) => {
 	const entities = []
 	req.body.data.forEach(record => {
-		if(typeof record.timestamp === 'undefined'){
-		record.timestamp = Date.now()
+		var timeStamp = record.timestamp
+		if (typeof timeStamp === 'undefined') {
+			timeStamp = Date.now()
+		}
+		const data = {
+			timestamp: timeStamp,
+			id: record.id,
+			user: record.user,
+			loc: record.lat + "," + record.long
 		}
 		const recordKey = datastore.key("Record")
 		entities.push(({
@@ -67,14 +74,11 @@ app.post('/api/run', (req, res, next) => {
 app.get('/api/run', (req, res, next) => {
 	var timeStamps
 	const userName = req.query.user
-	const lat = req.query.lat
-	const long = req.query.long
+	const position = req.query.loc
 	const id = parseInt(req.query.id)
 
-var position
-	if (typeof long !== 'undefined' && typeof lat !== 'undefined') {
-		position = { long: long, lat: lat }
-	}
+	var position
+
 	var query
 	var timeStampMin
 	var timeStampMax
@@ -107,13 +111,12 @@ var position
 			}
 		} else if (typeof position !== 'undefined') {
 			query = lookUpByPos(position)
-		} else if (typeof id !== 'undefined'){
+		} else if (typeof id !== 'undefined') {
 			query = lookUpById(id)
 		} else {
 			query = getall()
 		}
 	}
-console.log(query)
 	datastore.runQuery(query)
 		.then(results => {
 
@@ -134,8 +137,7 @@ function lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax) {
 		.filter('user', '=', userName)
 		.filter('timestamp', '>=', timeStampMin)
 		.filter('timestamp', '<=', timeStampMax)
-		.filter('long', '=', position.long)
-		.filter('lat', '=', position.lat)
+		.filter('loc', '=', position)
 
 	return query
 }
@@ -144,8 +146,7 @@ function lookUpByNamePos(userName, position) {
 	const query = datastore
 		.createQuery('Record')
 		.filter('user', '=', userName)
-		.filter('long', '=', position.long)
-		.filter('lat', '=', position.lat)
+		.filter('loc', '=', position)
 	return query
 }
 
@@ -165,8 +166,7 @@ function lookUpByPosTime(position, timeStampMin, timeStampMax) {
 		.createQuery('Record')
 		.filter('timestamp', '>=', timeStampMin)
 		.filter('timestamp', '<=', timeStampMax)
-		.filter('long', '=', position.long)
-		.filter('lat', '=', position.lat)
+		.filter('loc', '=', position)
 	return query
 }
 
@@ -191,8 +191,7 @@ function lookUpByTime(timeStampMin, timeStampMax) {
 function lookUpByPos(position) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('long', '=', position.long)
-		.filter('lat', '=', position.lat)
+		.filter('loc', '=', position)
 	return query
 }
 
