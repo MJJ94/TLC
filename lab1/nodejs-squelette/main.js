@@ -103,13 +103,14 @@ app.post('/api/run/records', (req, res, next) => {
 // })
 
 app.get('/api/run', (req, res, next) => {
-	const timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+	var timeStamps
 	const userName = req.query.userName
 	const position = req.query.position
 	var query
 	var timeStampMin
 	var timeStampMax
-	if (timeStamps !== 'undefined') {
+	if (req.query.timeStamps !== 'undefined') {
+		timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 		if (timeStamps[0] >= timeStamps[1]) {
 			timeStampMax = timeStamps[0]
 			timeStampMin = timeStamps[1]
