@@ -111,18 +111,20 @@ app.get('/api/run/:userName/:position', (req, res, next) => {
                         .catch(err => {console.error('ERROR:', err)})
 })
 
-app.get('/api/run/:timeStamps', (req, res, next) => {
- const timeStamps = req.params.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
- const timeStampMin = 0
- const timeStampMax = 0
-/*
-//console.log(timeStamp[0])
+app.get('/api/run', (req, res, next) => {
+console.log(req.query)
+ const timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+ var timeStampMin = 0
+ var timeStampMax = 0
+
+console.log(timeStamps)
+
   if(timeStamps[0] >= timeStamps[1]) {
-	timeStampMax = timeStamp[0]
-	timeStampMin = timeStamp[1]
+	timeStampMax = timeStamps[0]
+	timeStampMin = timeStamps[1]
 }else {
-	timeStampMax = timeStamp[1]
-        timeStampMin = timeStamp[0]
+	timeStampMax = timeStamps[1]
+        timeStampMin = timeStamps[0]
 }
  
 const query = datastore
@@ -132,12 +134,12 @@ const query = datastore
 
  datastore.runQuery(query)
                         .then(results => {
-                                        const records = results[0]*/
-                                        res
+                                       const records = results[0]
+                                       res
                                            .status(200)
                                            .set('Content-Type', 'application/json')
-                                           .send(records)/*})
+                                           .send(records)})
  
                         .catch(err => {console.error('ERROR:', err)})
-*/
+
 })
