@@ -30,14 +30,14 @@ app.post('/api/run', (req, res, next) => {
 })
 
 app.delete('/api/run', (req, res, next) => {
-	const ids = req.query.run_id.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+	const ids = req.query.ids.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 	ids.forEach(id => {
 		const query = lookUpById(id)
 		datastore.runQuery(query)
 		.then(results => {
 			const records = results[0]
 			records.forEach(record => {
-				console.log("key " , record.key)
+				console.log("key " , record[datastore.KEY])
 			})
 		})
 
