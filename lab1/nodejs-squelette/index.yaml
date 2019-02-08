@@ -28,3 +28,10 @@ indexes:
   - name: timestamp
   - name: position
     direction: desc
+
+- kind: Record
+  ancestor: no
+  properties:
+  - name: id
+  - name: timestamp
+    direction: desc

@@ -113,6 +113,7 @@ app.get('/api/run', (req, res, next) => {
 
 	datastore.runQuery(query)
 		.then(results => {
+
 			const records = results[0]
 			res
 				.status(200)
