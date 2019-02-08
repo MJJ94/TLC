@@ -7,28 +7,6 @@ app.enable('trust proxy')
 app.use(bodyParser.json())
 const datastore = Datastore()
 
-app.post('/api/run', (req, res, next) => {
-	const recordKey = datastore.key('Record');
-	const entity = {
-		key: recordKey,
-		data: {
-			name: req.body.name,
-			firstname: req.body.firstname
-		}
-	}
-	datastore.insert(entity)
-		.then(() => {
-			console.log(`Record ${recordId} created successfully.`);
-		})
-		.catch(err => {
-			console.error('ERROR:', err);
-		});
-	res
-		.status(200)
-		.set('Content-Type', 'application/json')
-		.send(req.body)
-})
-
 app.delete('/api/run/:ids', (req, res, next) => {
 	if (typeof req.params.ids !== 'undefined') {
 		const ids = req.params.ids.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
@@ -70,7 +48,7 @@ app.listen(PORT, () => {
 app.post('/api/run', (req, res, next) => {
 	const entities = []
 	req.body.data.forEach(record => {
-		record.timeStamp = Date.now()
+		record.timestamp = Date.now()
 		const recordKey = datastore.key("Record")
 		entities.push(({
 			key: recordKey,
