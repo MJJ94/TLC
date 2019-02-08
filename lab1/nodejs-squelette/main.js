@@ -109,7 +109,7 @@ app.get('/api/run', (req, res, next) => {
 	var query
 	var timeStampMin
 	var timeStampMax
-	if (req.query.timeStamps !== 'undefined') {
+	if (typeof req.query.timeStamps !== 'undefined') {
 		timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 		if (timeStamps[0] >= timeStamps[1]) {
 			timeStampMax = timeStamps[0]
@@ -118,8 +118,8 @@ app.get('/api/run', (req, res, next) => {
 			timeStampMax = timeStamps[1]
 			timeStampMin = timeStamps[0]
 		}
-		if (userName !== 'undefined') {
-			if (position !== 'undefined') {
+		if (typeof userName !== 'undefined') {
+			if (typeof position !== 'undefined') {
 				query = lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax)
 			} else {
 				lookUpByNameTime(userName, timeStampMin, timeStampMax)
@@ -128,13 +128,13 @@ app.get('/api/run', (req, res, next) => {
 			lookUpByTime(timeStampMin, timeStampMax)
 		}
 	} else {
-		if (userName !== 'undefined') {
-			if (position !== 'undefined') {
+		if (typeof userName !== 'undefined') {
+			if (typeof position !== 'undefined') {
 				query = lookUpByNamePos(userName, position)
 			} else {
 				lookUpByName(userName)
 			}
-		} else if (position !== 'undefined') {
+		} else if (typeof position !== 'undefined') {
 			query = lookUpByPos(position)
 		}
 	}
