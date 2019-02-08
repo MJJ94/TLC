@@ -122,9 +122,9 @@ app.get('/api/run', (req, res, next) => {
 function lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('userName', '=', userName)
-		.filter('timeStamp', '>', timeStampMin)
-		.filter('timeStamp', '<', timeStampMax)
+		.filter('user', '=', userName)
+		.filter('timestamp', '>', timeStampMin)
+		.filter('timestamp', '<', timeStampMax)
 		.filter('long', '=', position.long)
 		.filter('lat', '=', position.lat)
 
@@ -134,7 +134,7 @@ function lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax) {
 function lookUpByNamePos(userName, position) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('userName', '=', userName)
+		.filter('user', '=', userName)
 		.filter('long', '=', position.long)
 		.filter('lat', '=', position.lat)
 	return query
@@ -143,9 +143,9 @@ function lookUpByNamePos(userName, position) {
 function lookUpByNameTime(userName, timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('userName', '=', userName)
-		.filter('timeStamp', '>', timeStampMin)
-		.filter('timeStamp', '<', timeStampMax)
+		.filter('user', '=', userName)
+		.filter('timestamp', '>', timeStampMin)
+		.filter('timestamp', '<', timeStampMax)
 
 	return query;
 }
@@ -153,8 +153,8 @@ function lookUpByNameTime(userName, timeStampMin, timeStampMax) {
 function lookUpByPosTime(position, timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('timeStamp', '>', timeStampMin)
-		.filter('timeStamp', '<', timeStampMax)
+		.filter('timestamp', '>', timeStampMin)
+		.filter('timestamp', '<', timeStampMax)
 		.filter('long', '=', position.long)
 		.filter('lat', '=', position.lat)
 	return query
@@ -163,7 +163,7 @@ function lookUpByPosTime(position, timeStampMin, timeStampMax) {
 function lookUpByName(userName) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('userName', '=', userName)
+		.filter('user', '=', userName)
 
 	return query;
 }
@@ -171,8 +171,8 @@ function lookUpByName(userName) {
 function lookUpByTime(timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('timeStamp', '>', timeStampMin)
-		.filter('timeStamp', '<', timeStampMax)
+		.filter('timestamp', '>', timeStampMin)
+		.filter('timestamp', '<', timeStampMax)
 
 	return query
 
