@@ -122,17 +122,17 @@ app.get('/api/run', (req, res, next) => {
 			if (typeof position !== 'undefined') {
 				query = lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax)
 			} else {
-				lookUpByNameTime(userName, timeStampMin, timeStampMax)
+				query = lookUpByNameTime(userName, timeStampMin, timeStampMax)
 			}
 		} else {
-			lookUpByTime(timeStampMin, timeStampMax)
+			query = lookUpByTime(timeStampMin, timeStampMax)
 		}
 	} else {
 		if (typeof userName !== 'undefined') {
 			if (typeof position !== 'undefined') {
 				query = lookUpByNamePos(userName, position)
 			} else {
-				lookUpByName(userName)
+				query = lookUpByName(userName)
 			}
 		} else if (typeof position !== 'undefined') {
 			query = lookUpByPos(position)
