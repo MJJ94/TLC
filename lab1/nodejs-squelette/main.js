@@ -29,29 +29,32 @@ app.post('/api/run', (req, res, next) => {
 		.send(req.body)
 })
 
-app.delete('/api/run', (req, res, next) => {
-	const ids = req.query.ids.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
-	ids.forEach(id => {
-		const query = lookUpById(id)
-		datastore.runQuery(query)
-			.then(results => {
-				const records = results[0]
-				records.forEach(record => {
-					console.log("key ", record[datastore.KEY])
-					const recordKey = record[datastore.KEY];
-					datastore
-						.delete(recordKey)
-						.then(() => {
-							console.log(`Record ${runId} deleted successfully.`);
-						})
-						.catch(err => {
-							console.error('ERROR:', err);
-						});
+app.delete('/api/run/:ids', (req, res, next) => {
+	if (typeof req.params.ids !== 'undefined') {
+		const ids = req.params.ids.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+		ids.forEach(id => {
+			const query = lookUpById(id)
+			datastore.runQuery(query)
+				.then(results => {
+					const records = results[0]
+					records.forEach(record => {
+						console.log("key ", record[datastore.KEY])
+						const recordKey = record[datastore.KEY];
+						datastore
+							.delete(recordKey)
+							.then(() => {
+								console.log(`Record ${id} deleted successfully.`);
+							})
+							.catch(err => {
+								console.error('ERROR:', err);
+							});
+					})
 				})
-			})
 
-			.catch(err => { console.error('ERROR:', err) })
-	})
+				.catch(err => { console.error('ERROR:', err) })
+		})
+	}
+
 	res
 		.status(200)
 		.set('Content-Type', 'application/json')
@@ -64,9 +67,9 @@ app.listen(PORT, () => {
 	console.log('Press Ctrl+C to quit.');
 })
 
-app.post('/api/run/records', (req, res, next) => {
+app.post('/api/run', (req, res, next) => {
 	const entities = []
-	req.body.records.forEach(record => {
+	req.body.data.forEach(record => {
 		record.timeStamp = Date.now()
 		const recordKey = datastore.key("Record")
 		entities.push(({
@@ -83,12 +86,17 @@ app.post('/api/run/records', (req, res, next) => {
 
 app.get('/api/run', (req, res, next) => {
 	var timeStamps
-	const userName = req.query.userName
-	const position = req.query.position
+	const userName = req.query.user
+	const lat = req.query.lat
+	const long = req.query.long
+	var position
+	if (typeof long !== 'undefined' && typeof lat !== 'undefined') {
+		position = { long: long, lat: lat }
+	}
 	var query
 	var timeStampMin
 	var timeStampMax
-	if (typeof req.query.timeStamps !== 'undefined') {
+	if (typeof req.query.timestamp !== 'undefined') {
 		timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 		if (timeStamps[0] >= timeStamps[1]) {
 			timeStampMax = timeStamps[0]
@@ -115,6 +123,8 @@ app.get('/api/run', (req, res, next) => {
 			}
 		} else if (typeof position !== 'undefined') {
 			query = lookUpByPos(position)
+		} else {
+			query = getall()
 		}
 	}
 
@@ -137,7 +147,8 @@ function lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax) {
 		.filter('userName', '=', userName)
 		.filter('timeStamp', '>', timeStampMin)
 		.filter('timeStamp', '<', timeStampMax)
-		.filter('position', '=', position)
+		.filter('long', '=', position.long)
+		.filter('lat', '=', position.lat)
 
 	return query
 }
@@ -146,8 +157,8 @@ function lookUpByNamePos(userName, position) {
 	const query = datastore
 		.createQuery('Record')
 		.filter('userName', '=', userName)
-		.filter('position', '=', position)
-
+		.filter('long', '=', position.long)
+		.filter('lat', '=', position.lat)
 	return query
 }
 
@@ -166,8 +177,8 @@ function lookUpByPosTime(position, timeStampMin, timeStampMax) {
 		.createQuery('Record')
 		.filter('timeStamp', '>', timeStampMin)
 		.filter('timeStamp', '<', timeStampMax)
-		.filter('position', '=', position)
-
+		.filter('long', '=', position.long)
+		.filter('lat', '=', position.lat)
 	return query
 }
 
@@ -192,8 +203,8 @@ function lookUpByTime(timeStampMin, timeStampMax) {
 function lookUpByPos(position) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('position', '=', position)
-
+		.filter('long', '=', position.long)
+		.filter('lat', '=', position.lat)
 	return query
 }
 
@@ -201,6 +212,13 @@ function lookUpById(id) {
 	const query = datastore
 		.createQuery('Record')
 		.filter('id', '=', id)
+
+	return query
+}
+
+function getall() {
+	const query = datastore
+		.createQuery('Record')
 
 	return query
 }
