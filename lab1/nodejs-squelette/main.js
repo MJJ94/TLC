@@ -71,9 +71,73 @@ app.post('/api/run/records', (req, res, next) => {
 		.send(req.body.records)
 })
 
+// app.get('/api/run', (req, res, next) => {
+// 	const userName = req.query.userName
+// 	const query = lookUpByName(userName);
+// 	datastore.runQuery(query)
+// 		.then(results => {
+// 			const records = results[0]
+// 			res
+// 				.status(200)
+// 				.set('Content-Type', 'application/json')
+// 				.send(records)
+// 		})
+// 		.catch(err => { console.error('ERROR:', err) })
+
+// })
+
+// app.get('/api/run', (req, res, next) => {
+// 	const userName = req.query.userName
+// 	const position = req.query.position
+
+// 	datastore.runQuery(query)
+// 		.then(results => {
+// 			const records = results[0]
+// 			res
+// 				.status(200)
+// 				.set('Content-Type', 'application/json')
+// 				.send(records)
+// 		})
+
+// 		.catch(err => { console.error('ERROR:', err) })
+// })
+
 app.get('/api/run', (req, res, next) => {
+	const timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 	const userName = req.query.userName
-	const query = lookUpByName;
+	const position = req.query.position
+	var query
+	var timeStampMin
+	var timeStampMax
+	if (timeStamps !== 'undefined') {
+		if (timeStamps[0] >= timeStamps[1]) {
+			timeStampMax = timeStamps[0]
+			timeStampMin = timeStamps[1]
+		} else {
+			timeStampMax = timeStamps[1]
+			timeStampMin = timeStamps[0]
+		}
+		if (userName !== 'undefined') {
+			if (position !== 'undefined') {
+				query = lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax)
+			} else {
+				lookUpByNameTime(userName, timeStampMin, timeStampMax)
+			}
+		} else {
+			lookUpByTime(timeStampMin, timeStampMax)
+		}
+	} else {
+		if (userName !== 'undefined') {
+			if (position !== 'undefined') {
+				query = lookUpByNamePos(userName, position)
+			} else {
+				lookUpByName(userName)
+			}
+		} else if (position !== 'undefined') {
+			query = lookUpByPos(position)
+		}
+	}
+
 	datastore.runQuery(query)
 		.then(results => {
 			const records = results[0]
@@ -82,89 +146,73 @@ app.get('/api/run', (req, res, next) => {
 				.set('Content-Type', 'application/json')
 				.send(records)
 		})
+
 		.catch(err => { console.error('ERROR:', err) })
 
 })
 
-app.get('/api/run', (req, res, next) => {
-	const userName = req.query.userName
-	const position = req.query.position
+function lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax) {
+	const query = datastore
+		.createQuery('Record')
+		.filter('userName', '=', userName)
+		.filter('timeStamp', '>', timeStampMin)
+		.filter('timeStamp', '<', timeStampMax)
+		.filter('position', '=', position)
+
+	return query
+}
+
+function lookUpByNamePos(userName, position) {
 	const query = datastore
 		.createQuery('Record')
 		.filter('userName', '=', userName)
 		.filter('position', '=', position)
 
-	datastore.runQuery(query)
-		.then(results => {
-			const records = results[0]
-			res
-				.status(200)
-				.set('Content-Type', 'application/json')
-				.send(records)
-		})
+	return query
+}
 
-		.catch(err => { console.error('ERROR:', err) })
-})
+function lookUpByNameTime(userName, timeStampMin, timeStampMax) {
+	const query = datastore
+		.createQuery('Record')
+		.filter('userName', '=', userName)
+		.filter('timeStamp', '>', timeStampMin)
+		.filter('timeStamp', '<', timeStampMax)
 
-app.get('/api/run', (req, res, next) => {
-	const timeStamps = req.query.timeStamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
-	var timeStampMin = 0
-	var timeStampMax = 0
+	return query;
+}
 
-	if (timeStamps[0] >= timeStamps[1]) {
-		timeStampMax = timeStamps[0]
-		timeStampMin = timeStamps[1]
-	} else {
-		timeStampMax = timeStamps[1]
-		timeStampMin = timeStamps[0]
-	}
-
+function lookUpByPosTime(position, timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
 		.filter('timeStamp', '>', timeStampMin)
 		.filter('timeStamp', '<', timeStampMax)
+		.filter('position', '=', position)
 
-	datastore.runQuery(query)
-		.then(results => {
-			const records = results[0]
-			res
-				.status(200)
-				.set('Content-Type', 'application/json')
-				.send(records)
-		})
-
-		.catch(err => { console.error('ERROR:', err) })
-
-})
-
-function lookUpByNamePosTime() {
-
-}
-
-function lookUpByNamePos() {
-
-}
-
-function lookUpByNameTime() {
-
-}
-
-function lookUpByPosTime() {
-
+	return query
 }
 
 function lookUpByName(userName) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('userName', '=', userName);
+		.filter('userName', '=', userName)
 
 	return query;
 }
 
-function lookUpByTime() {
+function lookUpByTime(timeStampMin, timeStampMax) {
+	const query = datastore
+		.createQuery('Record')
+		.filter('timeStamp', '>', timeStampMin)
+		.filter('timeStamp', '<', timeStampMax)
+
+	return query
 
 }
 
-function lookUpByPos() {
+function lookUpByPos(position) {
+	const query = datastore
+		.createQuery('Record')
+		.filter('position', '=', position)
 
+	return query
 }
