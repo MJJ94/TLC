@@ -96,9 +96,11 @@ app.get('/api/run', (req, res, next) => {
 			if (typeof id !== 'undefined') {
 				query = lookUpByIdTime(id, timeStampMin, timeStampMax)
 			} else if (typeof userName !== 'undefined') {
+				console.log("ici ?")				
 				if (typeof position !== 'undefined') {
 					query = lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax)
 				} else {
+					console.log("iciiiiiiiiiiiiiiiiiiiiii")
 					query = lookUpByNameTime(userName, timeStampMin, timeStampMax)
 				}
 			} else {
