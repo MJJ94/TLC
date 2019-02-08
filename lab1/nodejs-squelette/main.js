@@ -34,23 +34,23 @@ app.delete('/api/run', (req, res, next) => {
 	ids.forEach(id => {
 		const query = lookUpById(id)
 		datastore.runQuery(query)
-		.then(results => {
-			const records = results[0]
-			records.forEach(record => {
-				console.log("key " , record[datastore.KEY])
+			.then(results => {
+				const records = results[0]
+				records.forEach(record => {
+					console.log("key ", record[datastore.KEY])
+					const recordKey = record[datastore.KEY];
+					datastore
+						.delete(recordKey)
+						.then(() => {
+							console.log(`Record ${runId} deleted successfully.`);
+						})
+						.catch(err => {
+							console.error('ERROR:', err);
+						});
+				})
 			})
-		})
 
-		.catch(err => { console.error('ERROR:', err) })
-		const recordKey = datastore.key(['Record', runId]);
-		datastore
-			.delete(recordKey)
-			.then(() => {
-				console.log(`Record ${runId} deleted successfully.`);
-			})
-			.catch(err => {
-				console.error('ERROR:', err);
-			});
+			.catch(err => { console.error('ERROR:', err) })
 	})
 	res
 		.status(200)
