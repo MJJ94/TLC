@@ -75,7 +75,7 @@ app.get('/api/run', (req, res, next) => {
 	var timeStampMin
 	var timeStampMax
 	if (typeof req.query.timestamp !== 'undefined') {
-		timeStamps = req.query.timestamps.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
+		timeStamps = req.query.timestamp.split(',').map(v => parseInt(v)).filter(v => !isNaN(v))
 		if (timeStamps[0] >= timeStamps[1]) {
 			timeStampMax = timeStamps[0]
 			timeStampMin = timeStamps[1]
@@ -123,8 +123,8 @@ function lookUpByNamePosTime(userName, position, timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
 		.filter('user', '=', userName)
-		.filter('timestamp', '>', timeStampMin)
-		.filter('timestamp', '<', timeStampMax)
+		.filter('timestamp', '>=', timeStampMin)
+		.filter('timestamp', '<=', timeStampMax)
 		.filter('long', '=', position.long)
 		.filter('lat', '=', position.lat)
 
@@ -141,20 +141,21 @@ function lookUpByNamePos(userName, position) {
 }
 
 function lookUpByNameTime(userName, timeStampMin, timeStampMax) {
+
 	const query = datastore
 		.createQuery('Record')
 		.filter('user', '=', userName)
-		.filter('timestamp', '>', timeStampMin)
-		.filter('timestamp', '<', timeStampMax)
-
+		.filter('timestamp', '>=', timeStampMin)
+		.filter('timestamp', '<=', timeStampMax)
+	console.log(query)
 	return query;
 }
 
 function lookUpByPosTime(position, timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('timestamp', '>', timeStampMin)
-		.filter('timestamp', '<', timeStampMax)
+		.filter('timestamp', '>=', timeStampMin)
+		.filter('timestamp', '<=', timeStampMax)
 		.filter('long', '=', position.long)
 		.filter('lat', '=', position.lat)
 	return query
@@ -171,8 +172,8 @@ function lookUpByName(userName) {
 function lookUpByTime(timeStampMin, timeStampMax) {
 	const query = datastore
 		.createQuery('Record')
-		.filter('timestamp', '>', timeStampMin)
-		.filter('timestamp', '<', timeStampMax)
+		.filter('timestamp', '>=', timeStampMin)
+		.filter('timestamp', '<=', timeStampMax)
 
 	return query
 

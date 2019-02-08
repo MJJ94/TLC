@@ -3,35 +3,28 @@ indexes:
 - kind: Record
   ancestor: no
   properties:
-  - name: userName
+  - name: user
   - name: position
     direction: desc
 
 - kind: Record
   ancestor: no
   properties:
-  - name: userName
-  - name: timeStamp
-    direction: desc
-
-- kind: Record
-  ancestor: no
-  properties:
-  - name: timeStamp
-  - name: timeStamp
+  - name: user
+  - name: timestamp
     direction: desc
 
 - kind: Record
   ancestor: no
   properties:
   - name: position
-  - name: timeStamp
+  - name: timestamp
     direction: desc
 
 - kind: Record
   ancestor: no
   properties:
-  - name: userName
-  - name: timeStamp
+  - name: user
+  - name: timestamp
   - name: position
     direction: desc
